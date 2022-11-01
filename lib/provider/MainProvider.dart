@@ -24,7 +24,7 @@ class MainProvider extends ChangeNotifier {
             final res = await firestoreRepository.apiRead('users/${value.user!.uid}');
             loading = false;
             if (res != null) {
-              if (res['uid'] == value.user!.uid) {
+              if (res['uid'].toString() == value.user!.uid) {
                 GlobalWidget.toast('Login Successfully');
                 Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
               } else {
@@ -62,7 +62,7 @@ class MainProvider extends ChangeNotifier {
           final res = await firestoreRepository.apiRead('users/${value.user!.uid}');
           loading = false;
           if (res != null) {
-            if (res['uid'] == value.user!.uid) {
+            if (res['uid'].toString() == value.user!.uid) {
               GlobalWidget.toast('Login Successfully');
               Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
             } else {
