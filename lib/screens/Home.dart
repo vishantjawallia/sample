@@ -1,4 +1,6 @@
 // import 'package:cache_image/cache_image.dart';
+// ignore_for_file: use_key_in_widget_constructors
+
 import '../config/Palettes.dart';
 import '../screens/home/cart_page.dart';
 import '../screens/home/home_page.dart';

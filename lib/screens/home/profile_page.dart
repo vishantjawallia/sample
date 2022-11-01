@@ -24,8 +24,6 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   final FirebaseAuth auth = FirebaseAuth.instance;
   final FirebaseFirestore fire = FirebaseFirestore.instance;
-  // bool loading = false;
-  bool customer = true;
   final TextEditingController _name = TextEditingController();
   final TextEditingController _email = TextEditingController();
   final TextEditingController _phone = TextEditingController();
@@ -39,12 +37,15 @@ class _ProfilePageState extends State<ProfilePage> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             const Text('Edit Profile'),
-            Row(
-              children: const [
-                Text('Logout'),
-                SizedBox(width: 6),
-                Icon(Icons.power_settings_new, color: Palettes.white),
-              ],
+            GestureDetector(
+              onTap: () => Provider.of<MainProvider>(context, listen: false).signOut(context),
+              child: Row(
+                children: const [
+                  Text('Logout'),
+                  SizedBox(width: 6),
+                  Icon(Icons.power_settings_new, color: Palettes.white),
+                ],
+              ),
             ),
           ],
         ),
@@ -63,12 +64,11 @@ class _ProfilePageState extends State<ProfilePage> {
             }
           }
           return CustomProgress(
-            load: loading,
+            load: context.watch<MainProvider>().loading,
             child: Center(
               child: SingleChildScrollView(
                 scrollDirection: Axis.vertical,
                 child: Container(
-                  // height: 100.h,
                   padding: const EdgeInsets.symmetric(horizontal: 30),
                   child: Column(
                     mainAxisSize: MainAxisSize.max,
@@ -79,7 +79,6 @@ class _ProfilePageState extends State<ProfilePage> {
                       Text('Edit Profile', style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.w600)),
                       SizedBox(height: 3.h),
                       CustomTextField(
-                        autofocus: !loading,
                         controller: _name,
                         hint: 'Name',
                         keyboard: TextInputType.name,

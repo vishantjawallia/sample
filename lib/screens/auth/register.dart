@@ -36,7 +36,7 @@ class _RegisterState extends State<Register> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: CustomProgress(
-        load: loading,
+        load: context.watch<MainProvider>().loading,
         child: SingleChildScrollView(
           scrollDirection: Axis.vertical,
           child: Container(
@@ -54,7 +54,6 @@ class _RegisterState extends State<Register> {
                 Text('Sign Up', style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.w800)),
                 SizedBox(height: 2.h),
                 CustomTextField(
-                  autofocus: !loading,
                   controller: _name,
                   hint: 'Full Name',
                   keyboard: TextInputType.name,
@@ -92,7 +91,6 @@ class _RegisterState extends State<Register> {
   /* ----------------------------- Submit Handler ----------------------------- */
   void submitHandler() async {
     final main = Provider.of<MainProvider>(context, listen: false);
-
     main.loading = true;
     Map<String, dynamic> data = {
       "uid": auth.currentUser!.uid,

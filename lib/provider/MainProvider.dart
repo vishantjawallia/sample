@@ -16,7 +16,6 @@ class MainProvider extends ChangeNotifier {
   /* ------------------------------- @Auth Login OTP------------------------------ */
   void phoneAuth(BuildContext context, String phone) async {
     loading = true;
-    // notifyListeners();
     await auth.verifyPhoneNumber(
       phoneNumber: phone,
       verificationCompleted: (PhoneAuthCredential phoneAuthCredential) {
@@ -24,22 +23,21 @@ class MainProvider extends ChangeNotifier {
           if (value.user != null) {
             final res = await firestoreRepository.apiRead('users/${value.user!.uid}');
             loading = false;
-            // notifyListeners();
             if (res != null) {
-              if (res['id'] == value.user!.uid) {
+              if (res['uid'] == value.user!.uid) {
+                GlobalWidget.toast('Login Successfully');
                 Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
               } else {
                 signOut(context);
               }
             } else {
-              Navigator.popAndPushNamed(context, '/register');
+              Navigator.pushReplacementNamed(context, 'register');
             }
           }
         });
       },
       verificationFailed: (FirebaseAuthException error) {
         loading = false;
-        // notifyListeners();
         if (error.code == 'invalid-phone-number') {
           GlobalWidget.toast('Invalid phone number');
         }
@@ -57,28 +55,29 @@ class MainProvider extends ChangeNotifier {
   /* ------------------------------- @OTP Verify ------------------------------ */
   void otpVerify(BuildContext context, String id, String otp) async {
     loading = true;
+    notifyListeners();
     try {
       await auth.signInWithCredential(PhoneAuthProvider.credential(verificationId: id, smsCode: otp)).then((value) async {
         if (value.user != null) {
           final res = await firestoreRepository.apiRead('users/${value.user!.uid}');
           loading = false;
           if (res != null) {
-            if (res['id'] == value.user!.uid) {
+            if (res['uid'] == value.user!.uid) {
+              GlobalWidget.toast('Login Successfully');
               Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
             } else {
               signOut(context);
             }
           } else {
-            Navigator.popAndPushNamed(context, '/register');
+            Navigator.pushReplacementNamed(context, 'register');
           }
         }
       });
     } on FirebaseAuthException catch (e) {
       if (e.code == 'invalid-verification-code') {
         loading = false;
+        GlobalWidget.toast('Invalid OTP');
       }
-    } finally {
-      loading = false;
     }
     notifyListeners();
   }

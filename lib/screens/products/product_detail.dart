@@ -1,3 +1,9 @@
+// ignore_for_file: use_key_in_widget_constructors
+
+import 'dart:developer';
+
+import 'package:sample/models/product.dart';
+
 import '../../config/Palettes.dart';
 import '../../widgets/CustomProgress.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -5,14 +11,12 @@ import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 
 class ProductDetail extends StatelessWidget {
-  // Map product = {"": ""};
-  const ProductDetail({
-    Key? key,
-    // this.product,
-  }) : super(key: key);
+  Product? product;
+  ProductDetail(this.product);
 
   @override
   Widget build(BuildContext context) {
+    log(product!.toJson().toString());
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -28,18 +32,20 @@ class ProductDetail extends StatelessWidget {
                 scrollDirection: Axis.vertical,
                 child: Column(
                   children: [
-                    Container(
-                      color: Palettes.grey.withOpacity(0.2),
-                      padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
-                      child: CachedNetworkImage(
-                        fit: BoxFit.fill,
-                        height: 40.h,
-                        width: 100.w,
-                        fadeInDuration: const Duration(seconds: 1),
-                        progressIndicatorBuilder: (context, url, progress) => Center(
-                          child: CircularProgressIndicator(color: Palettes.primary.withOpacity(0.6)),
+                    Hero(
+                      tag: product!.id.toString(),
+                      child: Container(
+                        margin: const EdgeInsets.all(8),
+                        child: CachedNetworkImage(
+                          fit: BoxFit.fill,
+                          height: 40.h,
+                          width: 100.w,
+                          fadeInDuration: const Duration(seconds: 1),
+                          progressIndicatorBuilder: (context, url, progress) => Center(
+                            child: CircularProgressIndicator(color: Palettes.primary.withOpacity(0.6)),
+                          ),
+                          imageUrl: product?.image ?? 'https://firebasestorage.googleapis.com/v0/b/sample-ba5fa.appspot.com/o/home%2Fproduct.png?alt=media&token=1d6d6328-fa76-4d4e-af61-e20e76ec440a',
                         ),
-                        imageUrl: 'https://firebasestorage.googleapis.com/v0/b/sample-ba5fa.appspot.com/o/home%2Fproduct.png?alt=media&token=1d6d6328-fa76-4d4e-af61-e20e76ec440a',
                       ),
                     ),
                     Padding(
@@ -49,10 +55,15 @@ class ProductDetail extends StatelessWidget {
                         children: [
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text(
-                                'Coller T-Shit',
-                                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                              Expanded(
+                                child: Text(
+                                  product?.title ?? 'Coller T-Shit',
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                  ),
+                                ),
                               ),
                               Container(
                                 padding: const EdgeInsets.fromLTRB(5, 1, 5, 1),
@@ -64,8 +75,8 @@ class ProductDetail extends StatelessWidget {
                                       size: 16.sp,
                                     ),
                                     Text(
-                                      '2/4',
-                                      style: TextStyle(
+                                      product?.rating?.rate?.toString() ?? '2.6',
+                                      style: const TextStyle(
                                         fontSize: 16,
                                         color: Palettes.primary,
                                         fontWeight: FontWeight.w800,
@@ -77,136 +88,47 @@ class ProductDetail extends StatelessWidget {
                             ],
                           ),
                           SizedBox(height: 1.h),
-                          Row(
-                            children: [
-                              const Text(
-                                '₹210',
-                                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
-                              ),
-                              SizedBox(width: 2.w),
-                              const Text(
-                                '₹100',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w700,
-                                  decoration: TextDecoration.lineThrough,
-                                  color: Palettes.red,
-                                ),
-                              ),
-                            ],
+                          Text(
+                            '₹${product?.price}',
+                            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                           ),
                           SizedBox(height: 1.h),
 
-                          /* --------------------------------- Colors --------------------------------- */
+                          /* --------------------------------- Category --------------------------------- */
                           const Text(
-                            'Colors',
+                            'Category',
                             style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
                           ),
-                          Row(
-                            children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.circle,
-                                    size: 40.sp,
-                                    color: Palettes.red,
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 6),
+                            child: Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+                                  decoration: BoxDecoration(
+                                    color: Palettes.primary,
+                                    borderRadius: BorderRadius.circular(2),
                                   ),
-                                  const Text(
-                                    'Red',
-                                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                                  child: Text(
+                                    product!.category!,
+                                    style: TextStyle(fontSize: 10.sp, color: Palettes.white),
                                   ),
-                                ],
-                              ),
-                              SizedBox(width: 2.w),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.circle,
-                                    size: 40.sp,
-                                    color: Palettes.secondary,
+                                ),
+                                const SizedBox(width: 10),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                                  decoration: BoxDecoration(
+                                    border: Border.all(width: 1, color: Palettes.lightGrey),
+                                    borderRadius: BorderRadius.circular(4),
                                   ),
-                                  const Text(
-                                    'Blue',
-                                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                                  child: Text(
+                                    product?.rating?.count?.toString() ?? '6',
+                                    style: const TextStyle(fontSize: 12, color: Palettes.black),
                                   ),
-                                ],
-                              ),
-                              SizedBox(width: 2.w),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.circle,
-                                    size: 40.sp,
-                                    color: Palettes.black,
-                                  ),
-                                  const Text(
-                                    'Black',
-                                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                                  ),
-                                ],
-                              ),
-                            ],
+                                ),
+                              ],
+                            ),
                           ),
-                          SizedBox(height: 1.h),
-
-                          /* --------------------------------- Sizes --------------------------------- */
-                          const Text(
-                            'Size',
-                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
-                          ),
-                          SizedBox(height: 0.4.h),
-                          Row(
-                            children: [
-                              Container(
-                                margin: const EdgeInsets.fromLTRB(0, 0, 10, 0),
-                                padding: const EdgeInsets.fromLTRB(5, 2, 5, 2),
-                                decoration: BoxDecoration(
-                                  border: Border.all(width: 2, color: Palettes.grey, style: BorderStyle.solid),
-                                ),
-                                child: const Text(
-                                  'M',
-                                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
-                                ),
-                              ),
-                              Container(
-                                margin: const EdgeInsets.fromLTRB(0, 0, 10, 0),
-                                padding: const EdgeInsets.fromLTRB(5, 2, 5, 2),
-                                decoration: BoxDecoration(
-                                  border: Border.all(width: 2, color: Palettes.grey, style: BorderStyle.solid),
-                                ),
-                                child: const Text(
-                                  'L',
-                                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
-                                ),
-                              ),
-                              Container(
-                                margin: const EdgeInsets.fromLTRB(0, 0, 10, 0),
-                                padding: const EdgeInsets.fromLTRB(5, 2, 5, 2),
-                                decoration: BoxDecoration(
-                                  border: Border.all(width: 2, color: Palettes.grey, style: BorderStyle.solid),
-                                ),
-                                child: const Text(
-                                  'XL',
-                                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
-                                ),
-                              ),
-                              Container(
-                                margin: const EdgeInsets.fromLTRB(0, 0, 10, 0),
-                                padding: const EdgeInsets.fromLTRB(5, 2, 5, 2),
-                                decoration: BoxDecoration(
-                                  border: Border.all(width: 2, color: Palettes.grey, style: BorderStyle.solid),
-                                ),
-                                child: const Text(
-                                  '2XL',
-                                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 1.h),
 
                           /* ------------------------------- Description ------------------------------ */
                           const Text(
@@ -214,11 +136,9 @@ class ProductDetail extends StatelessWidget {
                             style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
                           ),
                           SizedBox(height: 0.4.h),
-                          Container(
-                            child: const Text(
-                              "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum",
-                              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
-                            ),
+                          Text(
+                            product?.description ??
+                                "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum",
                           ),
                         ],
                       ),
@@ -238,7 +158,7 @@ class ProductDetail extends StatelessWidget {
                     width: 50.w,
                     child: TextButton(
                       style: ButtonStyle(
-                        side: MaterialStateProperty.all( BorderSide(width: 2, color: Palettes.primary)),
+                        side: MaterialStateProperty.all(const BorderSide(width: 2, color: Palettes.primary)),
                         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                         fixedSize: MaterialStateProperty.all(Size.fromHeight(6.h)),
                         backgroundColor: MaterialStateProperty.all(Palettes.primary),
@@ -251,7 +171,7 @@ class ProductDetail extends StatelessWidget {
                     width: 35.w,
                     child: TextButton(
                       style: ButtonStyle(
-                        side: MaterialStateProperty.all(BorderSide(width: 2, color: Palettes.secondary)),
+                        side: MaterialStateProperty.all(const BorderSide(width: 2, color: Palettes.secondary)),
                         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                         fixedSize: MaterialStateProperty.all(Size.fromHeight(6.h)),
                         backgroundColor: MaterialStateProperty.all(Palettes.secondary),

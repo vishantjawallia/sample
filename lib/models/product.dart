@@ -1,9 +1,7 @@
-
-
 class Product {
   int? id;
   String? title;
-  double? price;
+  num? price;
   String? description;
   String? category;
   String? image;
@@ -14,7 +12,7 @@ class Product {
   Product.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     title = json['title'];
-    price = json['price'];
+    price = json['price'] as num;
     description = json['description'];
     category = json['category'];
     image = json['image'];
@@ -35,13 +33,13 @@ class Product {
 }
 
 class Rating {
-  double? rate;
+  num? rate;
   int? count;
 
-  Rating({this.rate, this.count});
+  Rating({this.rate,this.count});
 
   Rating.fromJson(Map<String, dynamic> json) {
-    rate = json['rate'];
+    rate = json['rate'] as num;
     count = json['count'];
   }
 

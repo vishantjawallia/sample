@@ -13,7 +13,7 @@ final FirebaseFirestore fire = FirebaseFirestore.instance;
 
 class apiRepository {
   /* -------------------------------- @Get Request ------------------------------- */
-  static Future apiGetRequest(String? url) async {
+  static Future getRequest(String? url) async {
     try {
       final response = await http.get(
         Uri.parse(url!),
@@ -31,7 +31,7 @@ class apiRepository {
   }
 
   /* -------------------------------- @Post Request ------------------------------- */
-  static Future apiPostRequest(String? url, Map? data) async {
+  static Future postRequest(String? url, Map? data) async {
     try {
       final response = await http.post(
         Uri.parse(url!),

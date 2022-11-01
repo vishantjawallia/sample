@@ -10,10 +10,7 @@ import '../config/constant.dart';
 import '../screens/Home.dart';
 import '../screens/Spalsh.dart';
 import '../screens/auth/login.dart';
-// import '../screens/auth/profile.dart';
 import '../screens/auth/register.dart';
-import '../screens/home/order_page.dart';
-import '../screens/products/product_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 
@@ -48,15 +45,10 @@ class MyApp extends StatelessWidget {
           ),
           initialRoute: 'splash',
           routes: {
+            '/': (context) => Home(0),
             'splash': (context) => const Splash(),
             'login': (context) => const Login(),
-            '/': (context) => Home(0),
-            // '/otp': (context) => const Otp("",""),
-            // '/profile': (context) => const Profile(),
-            '/product_detail': (context) => const ProductDetail(),
-            '/splash': (context) => const Splash(),
-            '/register': (context) => const Register(),
-            '/order': (context) => const OrderPage(),
+            'register': (context) => const Register(),
           },
         );
       },

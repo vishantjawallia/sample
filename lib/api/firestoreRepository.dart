@@ -14,7 +14,7 @@ class firestoreRepository {
     try {
       final response = await fire.doc(path).get();
       if (response.exists) {
-        return response.id;
+        return response.data();
       } else {
         log("@Read Data  Error: id :${response.reference}");
         return;
