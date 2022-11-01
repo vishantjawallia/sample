@@ -1,32 +1,28 @@
 // ignore_for_file: nullable_type_in_catch_clause, unused_local_variable, camel_case_types
 
+import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
+import 'package:http/http.dart' as http;
 
 final FirebaseAuth auth = FirebaseAuth.instance;
 final FirebaseFirestore fire = FirebaseFirestore.instance;
 
-// import 'package:seller_support/provider/MainProvider.dart';
-
 class apiRepository {
-
-  
-  /* --------------------------------- @Create  -------------------------------- */
-  static apiCreate(Map data, String collection) async {
+  /* -------------------------------- @Get Request ------------------------------- */
+  static Future apiGetRequest(String? url) async {
     try {
-      Map<String, dynamic> create = {
-        ...data,
-        "created_at": DateTime.now(),
-      };
-      final response = await fire.collection(collection).add(create);
-      if (response.id.isNotEmpty) {
-        return response.id;
+      final response = await http.get(
+        Uri.parse(url!),
+        headers: {'Content-Type': "application/json"},
+      );
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
       } else {
-        log("@Create Data Add Error: id :${response.id}");
+        log(response.statusCode.toString());
         return;
       }
     } on SocketException catch (e) {
@@ -34,35 +30,18 @@ class apiRepository {
     }
   }
 
-  /* --------------------------------- @Update  -------------------------------- */
-  static apiUpdate(String id, String collection, Map<String, dynamic> data) async {
+  /* -------------------------------- @Post Request ------------------------------- */
+  static Future apiPostRequest(String? url, Map? data) async {
     try {
-      Map<String, dynamic> update = {
-        ...data,
-        "updated_at": DateTime.now(),
-      };
-      final response = fire.collection(collection).doc(id);
-      if (response.id.isNotEmpty) {
-        await response.update(data);
-        return response.id;
+      final response = await http.post(
+        Uri.parse(url!),
+        body: jsonEncode(data),
+        headers: {'Content-Type': "application/json"},
+      );
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
       } else {
-        log("@Update ID Not Exist:${response.id}");
-        return;
-      }
-    } on SocketException catch (e) {
-      log('$e');
-    }
-  }
-
-  /* --------------------------------- @Delete  -------------------------------- */
-  static apiDelete(String id, String collection) async {
-    try {
-      final response = fire.collection(collection).doc(id);
-      if (response.id.isNotEmpty) {
-        await response.delete();
-        return response.id;
-      } else {
-        log("@Delete ID Not Exist:${response.id}");
+        log(response.statusCode.toString());
         return;
       }
     } on SocketException catch (e) {

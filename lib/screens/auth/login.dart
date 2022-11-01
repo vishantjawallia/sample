@@ -1,5 +1,8 @@
+import 'package:provider/provider.dart';
+
 import '../../config/MyImages.dart';
 import '../../config/Palettes.dart';
+import '../../provider/MainProvider.dart';
 import '../../widgets/CustomProgress.dart';
 import '../../widgets/CustomTextField.dart';
 import '../../widgets/GlobalWidget.dart';
@@ -20,9 +23,10 @@ class Submit extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
+    // final main = Provider.of<MainProvider>(context, listen: false);
     return Scaffold(
       body: CustomProgress(
-        load: loading,
+        load: context.watch<MainProvider>().loading,
         child: SingleChildScrollView(
           scrollDirection: Axis.vertical,
           child: Container(
@@ -44,10 +48,12 @@ class Submit extends State<Login> {
                 ),
                 SizedBox(height: 2.h),
                 CustomTextField(
-                  autofocus: !loading,
                   controller: _phone,
                   hint: 'Enter Your Mobile No.',
                   keyboard: TextInputType.phone,
+                  onTap: () {
+                    // _phone.text = '+91';
+                  },
                 ),
                 SizedBox(height: 2.h),
                 SizedBox(
@@ -67,27 +73,13 @@ class Submit extends State<Login> {
     );
   }
 
-  /* --------------------------- Next Submit Handler -------------------------- */
+  /* --------------------------- @Next Submit Handler -------------------------- */
   void submitHandler() {
-    setState(() {
-      loading = true;
-    });
-    Future.delayed(const Duration(seconds: 2), () {
-      setState(() {
-        loading = false;
-      });
-      GlobalWidget.toast('Next');
-      Navigator.pushNamed(context, '/otp');
-    });
-  }
-
-  /* ----------------------------- Google Login ----------------------------- */
-  void loginGoogle() {
-    GlobalWidget.toast('Google Login');
-  }
-
-  /* ----------------------------- Facebook Login ----------------------------- */
-  void loginFacebook() {
-    GlobalWidget.toast('Facebook Login');
+    if (_phone.text.isEmpty) {
+      GlobalWidget.toast('Please enter a phone number');
+      return;
+    }
+    final main = Provider.of<MainProvider>(context, listen: false);
+    main.phoneAuth(context, _phone.text);
   }
 }

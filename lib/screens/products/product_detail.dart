@@ -63,7 +63,7 @@ class ProductDetail extends StatelessWidget {
                                       color: Palettes.primary,
                                       size: 16.sp,
                                     ),
-                                    const Text(
+                                    Text(
                                       '2/4',
                                       style: TextStyle(
                                         fontSize: 16,
@@ -238,7 +238,7 @@ class ProductDetail extends StatelessWidget {
                     width: 50.w,
                     child: TextButton(
                       style: ButtonStyle(
-                        side: MaterialStateProperty.all(const BorderSide(width: 2, color: Palettes.primary)),
+                        side: MaterialStateProperty.all( BorderSide(width: 2, color: Palettes.primary)),
                         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                         fixedSize: MaterialStateProperty.all(Size.fromHeight(6.h)),
                         backgroundColor: MaterialStateProperty.all(Palettes.primary),
@@ -251,7 +251,7 @@ class ProductDetail extends StatelessWidget {
                     width: 35.w,
                     child: TextButton(
                       style: ButtonStyle(
-                        side: MaterialStateProperty.all(const BorderSide(width: 2, color: Palettes.secondary)),
+                        side: MaterialStateProperty.all(BorderSide(width: 2, color: Palettes.secondary)),
                         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                         fixedSize: MaterialStateProperty.all(Size.fromHeight(6.h)),
                         backgroundColor: MaterialStateProperty.all(Palettes.secondary),

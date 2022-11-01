@@ -5,16 +5,16 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sizer/sizer.dart';
 
 class GlobalWidget {
-  static toast(String msg) {
-    return Fluttertoast.showToast(
-      msg: msg,
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.BOTTOM,
-      timeInSecForIosWeb: 1,
-      backgroundColor: Colors.grey.shade800,
-      fontSize: 12.sp,
-    );
-  }
+  // static toast(String msg) {
+  //   return Fluttertoast.showToast(
+  //     msg: msg,
+  //     toastLength: Toast.LENGTH_SHORT,
+  //     gravity: ToastGravity.BOTTOM,
+  //     timeInSecForIosWeb: 1,
+  //     backgroundColor: Colors.grey.shade800,
+  //     fontSize: 12.sp,
+  //   );
+  // }
 
   static drawer(context) {
     return SafeArea(
@@ -94,6 +94,17 @@ class GlobalWidget {
           ),
         ),
       ),
+    );
+  }
+
+  static toast(String? value) {
+    return Fluttertoast.showToast(
+      msg: "$value",
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+      timeInSecForIosWeb: 1,
+      backgroundColor: Colors.grey.shade700,
+      textColor: Colors.white,
     );
   }
 }

@@ -1,10 +1,18 @@
-// ignore_for_file: non_constant_identifier_names
+// ignore_for_file: non_constant_identifier_names, use_build_context_synchronously
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:provider/provider.dart';
+import 'package:sample/api/firestoreRepository.dart';
+import 'package:sample/provider/MainProvider.dart';
+import 'package:sample/widgets/GlobalWidget.dart';
+// import 'package:sample/api/firestoreRepository.dart';
+// import 'package:sample/provider/MainProvider.dart';
 
 import '../../config/MyImages.dart';
 import '../../config/Palettes.dart';
 import '../../widgets/CustomProgress.dart';
 import '../../widgets/CustomTextField.dart';
-import '../../widgets/GlobalWidget.dart';
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 
@@ -18,14 +26,11 @@ class Register extends StatefulWidget {
 class _RegisterState extends State<Register> {
   bool loading = false;
   bool isChecked = false;
-  // bool customer = true;
-  final TextEditingController _phone = TextEditingController();
   final TextEditingController _name = TextEditingController();
   final TextEditingController _email = TextEditingController();
-  final TextEditingController _address = TextEditingController();
-  final TextEditingController _pin = TextEditingController();
-  final TextEditingController _firm = TextEditingController();
-  final TextEditingController _gst = TextEditingController();
+
+  final FirebaseAuth auth = FirebaseAuth.instance;
+  final FirebaseFirestore fire = FirebaseFirestore.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -46,9 +51,7 @@ class _RegisterState extends State<Register> {
                   width: 40.h,
                 ),
                 SizedBox(height: 1.h),
-                Text('Sign Up',
-                    style: TextStyle(
-                        fontSize: 20.sp, fontWeight: FontWeight.w800)),
+                Text('Sign Up', style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.w800)),
                 SizedBox(height: 2.h),
                 CustomTextField(
                   autofocus: !loading,
@@ -62,50 +65,19 @@ class _RegisterState extends State<Register> {
                   hint: 'Email',
                   keyboard: TextInputType.emailAddress,
                 ),
-                Align(
-                  widthFactor: 0.229.w,
-                  alignment: Alignment.centerRight,
-                  child: Row(
-                    children: [
-                      Checkbox(
-                        visualDensity: VisualDensity.comfortable,
-                        checkColor: Colors.white,
-                        focusColor: Palettes.primary,
-                        activeColor: Palettes.primary,
-                        value: isChecked,
-                        onChanged: (bool? value) {
-                          setState(() {
-                            isChecked = value!;
-                          });
-                        },
-                      ),
-                      Text(
-                        "I agreed to NearTake's ",
-                        style: TextStyle(fontSize: 11.sp),
-                      ),
-                      Text(
-                        'Terms & Conditions',
-                        style: TextStyle(
-                            fontSize: 11.sp,
-                            color: Palettes.primary,
-                            fontWeight: FontWeight.w600),
-                      ),
-                    ],
-                  ),
+                SizedBox(height: 1.h),
+                CustomTextField(
+                  controller: TextEditingController(text: auth.currentUser!.phoneNumber),
+                  readOnly: true,
                 ),
                 SizedBox(height: 2.h),
                 SizedBox(
                   width: 30.w,
                   height: 5.h,
                   child: TextButton(
-                    style: ButtonStyle(
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        backgroundColor:
-                            MaterialStateProperty.all(Palettes.primary)),
+                    style: ButtonStyle(tapTargetSize: MaterialTapTargetSize.shrinkWrap, backgroundColor: MaterialStateProperty.all(Palettes.primary)),
                     onPressed: submitHandler,
-                    child: Text('Sign Up',
-                        style:
-                            TextStyle(fontSize: 12.sp, color: Palettes.white)),
+                    child: Text('Sign Up', style: TextStyle(fontSize: 12.sp, color: Palettes.white)),
                   ),
                 ),
                 SizedBox(height: 2.h),
@@ -118,22 +90,21 @@ class _RegisterState extends State<Register> {
   }
 
   /* ----------------------------- Submit Handler ----------------------------- */
-  void submitHandler() {
-    Map data = {
-      "name": "",
-      "email": "",
-      "address": "",
-      "pincode": "",
+  void submitHandler() async {
+    final main = Provider.of<MainProvider>(context, listen: false);
+
+    main.loading = true;
+    Map<String, dynamic> data = {
+      "uid": auth.currentUser!.uid,
+      "name": _name.text,
+      "phone": auth.currentUser!.phoneNumber,
+      "email": _email.text,
     };
-    setState(() {
-      loading = true;
-    });
-    GlobalWidget.toast('Next');
-    Future.delayed(const Duration(seconds: 2), () {
-      setState(() {
-        loading = false;
-      });
-      Navigator.pushNamed(context, '/');
-    });
+    final res = await firestoreRepository.apiCreate(data, 'users/${auth.currentUser!.uid}');
+    if (res != null) {
+      GlobalWidget.toast('Profile updated successfully');
+      main.loading = false;
+      Navigator.pushReplacementNamed(context, '/');
+    }
   }
 }

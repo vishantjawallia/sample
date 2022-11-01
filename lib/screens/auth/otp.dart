@@ -1,29 +1,39 @@
+// ignore_for_file: no_logic_in_create_state
+
 import 'package:pin_code_fields/pin_code_fields.dart';
+import 'package:provider/provider.dart';
+import 'package:sample/provider/MainProvider.dart';
+import 'package:sample/widgets/GlobalWidget.dart';
 
 import '../../config/MyImages.dart';
 import '../../config/Palettes.dart';
 import '../../widgets/CustomProgress.dart';
-import '../../widgets/GlobalWidget.dart';
 import 'package:flutter/material.dart';
-// import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:sizer/sizer.dart';
 
 class Otp extends StatefulWidget {
-  const Otp({Key? key}) : super(key: key);
+  String? phone;
+  String? id;
+  Otp(this.phone, this.id, {super.key});
 
   @override
-  State<Otp> createState() => Submit();
+  State<Otp> createState() => Submit(phone, id);
 }
 
 class Submit extends State<Otp> {
-  bool loading = false;
+  String? phone;
+  String? id;
+  String? otp;
+  Submit(this.phone, this.id);
+  // bool loading = false;
   final TextEditingController _phone = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
+    // final main = Provider.of<MainProvider>(context);
     return Scaffold(
       body: CustomProgress(
-        load: loading,
+        load: context.watch<MainProvider>().loading,
         child: SingleChildScrollView(
           scrollDirection: Axis.vertical,
           child: Container(
@@ -49,7 +59,7 @@ class Submit extends State<Otp> {
                   obscureText: false,
                   animationType: AnimationType.fade,
                   pinTheme: PinTheme(
-                    fieldOuterPadding: EdgeInsets.all(5.sp),
+                    fieldOuterPadding: EdgeInsets.symmetric(vertical: 5.sp),
                     shape: PinCodeFieldShape.box,
                     borderRadius: BorderRadius.circular(5),
                     fieldHeight: 50,
@@ -62,33 +72,17 @@ class Submit extends State<Otp> {
                     selectedColor: Palettes.primary,
                   ),
                   animationDuration: const Duration(milliseconds: 300),
-                  // backgroundColor: Colors.blue.shade50,
                   enableActiveFill: true,
-                  // errorAnimationController: errorController,
-                  // controller: textEditingController,
                   onCompleted: (v) {
                     print("Completed");
                   },
                   onChanged: (value) {
-                    print(value);
                     setState(() {
-                      // currentText = value;
+                      otp = value;
                     });
-                  },
-                  beforeTextPaste: (text) {
-                    print("Allowing to paste $text");
-                    //if you return true then it will show the paste confirmation dialog. Otherwise if false, then nothing will happen.
-                    //but you can show anything you want here, like your pop up saying wrong paste format or etc
-                    return true;
                   },
                   appContext: context,
                 ),
-                // CustomTextField(
-                //   autofocus: !loading,
-                //   controller: _phone,
-                //   hint: 'Enter Your Mobile No.',
-                //   keyboard: TextInputType.phone,
-                // ),
                 SizedBox(height: 2.h),
                 SizedBox(
                   width: 30.w,
@@ -99,38 +93,6 @@ class Submit extends State<Otp> {
                     child: Text('Next', style: TextStyle(fontSize: 12.sp, color: Palettes.white)),
                   ),
                 ),
-                // SizedBox(height: 2.h),
-                // Row(
-                //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                //   children: [
-                //     CustomLine(
-                //       width: 34.w,
-                //       borderWidth: .8.sp,
-                //     ),
-                //     Text('OR', style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w700)),
-                //     CustomLine(
-                //       width: 34.w,
-                //       borderWidth: .8.sp,
-                //     )
-                //   ],
-                // ),
-                // SizedBox(height: 2.h),
-                // Padding(
-                //   padding: const EdgeInsets.symmetric(horizontal: 80, vertical: 10),
-                //   child: Row(
-                //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                //     children: [
-                //       Container(
-                //         decoration: const BoxDecoration(shape: BoxShape.circle, color: Palettes.primary),
-                //         child: IconButton(icon: const FaIcon(FontAwesomeIcons.google, color: Palettes.white), onPressed: OtpGoogle),
-                //       ),
-                //       Container(
-                //         decoration: const BoxDecoration(shape: BoxShape.circle, color: Palettes.primary),
-                //         child: IconButton(icon: const FaIcon(FontAwesomeIcons.facebook, color: Palettes.white), onPressed: OtpFacebook),
-                //       ),
-                //     ],
-                //   ),
-                // ),
               ],
             ),
           ),
@@ -139,27 +101,13 @@ class Submit extends State<Otp> {
     );
   }
 
-  /* --------------------------- Next Submit Handler -------------------------- */
+  /* --------------------------- @Next Submit Handler -------------------------- */
   void submitHandler() {
-    setState(() {
-      loading = true;
-    });
-    Future.delayed(const Duration(seconds: 2), () {
-      setState(() {
-        loading = false;
-      });
-      GlobalWidget.toast('Next');
-      Navigator.pushNamed(context, '/register');
-    });
-  }
-
-  /* ----------------------------- Google Otp ----------------------------- */
-  void OtpGoogle() {
-    GlobalWidget.toast('Google Otp');
-  }
-
-  /* ----------------------------- Facebook Otp ----------------------------- */
-  void OtpFacebook() {
-    GlobalWidget.toast('Facebook Otp');
+    if (otp!.length != 6) {
+      GlobalWidget.toast('Please enter 6 digit otp');
+      return;
+    }
+    final main = Provider.of<MainProvider>(context, listen: false);
+    main.otpVerify(context, id!, otp!);
   }
 }

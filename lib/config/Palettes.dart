@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:hexcolor/hexcolor.dart';
 
 class Palettes {
+  // static final HexColor primary = HexColor('#00539cff');
+  // static final HexColor secondary = HexColor('#EEA47FFF');
   static const Color primary = Color.fromRGBO(47, 135, 199, 1);
-  // static const Color primary = Color.fromRGBO(62, 64, 149, 1);
   static const Color secondary = Color.fromRGBO(240, 101, 34, 1);
-  // static const Color secondary = Color.fromRGBO(0, 174, 238, 1);
   static const Color white = Colors.white;
   static const Color red = Colors.red;
   static const Color black = Colors.black;

@@ -1,4 +1,7 @@
-import '../config/MyImages.dart';
+import 'package:provider/provider.dart';
+import 'package:sample/provider/MainProvider.dart';
+import 'package:sizer/sizer.dart';
+
 import '../config/Palettes.dart';
 import 'package:flutter/material.dart';
 
@@ -23,9 +26,15 @@ class Splash extends StatelessWidget {
                 ],
               ),
             ),
-            child: Image.asset(
-              MyImages.logo,
-              width: 300,
+            child: Center(
+              child: Text(
+                'E-commerce',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 28.sp,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
             ),
           );
         },
@@ -35,7 +44,15 @@ class Splash extends StatelessWidget {
 
   Future<void> splashLoad(context) async {
     Future.delayed(const Duration(seconds: 2), () {
-      Navigator.pushReplacementNamed(context, '/login');
+      if (auth.currentUser != null) {
+        if (auth.currentUser!.uid.isEmpty) {
+          Provider.of<MainProvider>(context, listen: false).signOut(context);
+          return;
+        }
+        Navigator.pushReplacementNamed(context, '/');
+      } else {
+        Navigator.pushReplacementNamed(context, 'login');
+      }
     });
   }
 }
